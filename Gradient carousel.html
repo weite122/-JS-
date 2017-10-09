@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>面向对象之自动渐变轮播</title>
+    <style>
+        ul,li{
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .carousel{
+            position: relative;
+            width: 300px;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .carousel .img-container{
+            position: absolute;
+            overflow: hidden;
+        }
+        .img-container li{
+            float: left;
+        }
+        .img-container img{
+            
+            display: block;
+            width: 300px;
+            height: 200px;
+            z-index: 0
+        }
+
+        .carousel .btn{
+            position: absolute;
+            top: 50%;
+            margin-top: -15px;
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 20px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 1
+        }
+        .btn:hover{
+            opacity: 0.6;
+        }
+        .btn-pre{
+            left: 5px;
+        }
+        .btn-next{
+            right: 5px;
+        }
+        .bullet{
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            
+        }
+        .bullet>li{
+            display: inline-block;
+            font-size: 0;
+            width: 25px;
+            height: 5px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .bullet .active{
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel">
+        <ul class="img-container">
+            <li data-index="0"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/1.jpg" alt="1.jpg"></a></li>
+			<li data-index="1"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/2.jpg" alt="2.jpg"></a></li>
+			<li data-index="2"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/3.jpg" alt="3.jpg"></a></li>
+			<li data-index="3"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/4.jpg" alt="4.jpg"></a></li>        
+        </ul>
+        <a href="#" class="btn btn-pre">&lt;</a>
+        <a href="#" class="btn btn-next">&gt;</a>
+        <div class="bullet-container">
+            <ul class="bullet">
+                <li class = "active"></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+    
+    <script>
+
+        var AutoCarousel = (function(){ 
+            function _AutoCarousel($ct){
+                this.$ct = $ct
+                this.init()
+                this.bind()
+            }
+            _AutoCarousel.prototype.init = function(){
+                var $imgContainer = this.$imgContainer = $('.img-container')
+                var $imgs = this.$imgs = $('.img-container >li')
+                var imgCount = this.imgCount = $imgs.length
+                var imgWidth = this.imgWidth = $imgs.width()
+                var $preBtn = this.$preBtn = this.$ct.find('.btn-pre')
+                var $nextBtn = this.$nextBtn = this.$ct.find('.btn-next ')
+                var $bullets = this.$bullets = this.$ct.find('.bullet')
+                this.pageIndex = 0
+                this.isAnimate =false
+                this.play(0)
+                this.autoPlay(0)
+            }
+            _AutoCarousel.prototype.bind = function(){
+                var _this = this
+                this.$preBtn.click(function(){
+                    _this.playPre()
+                })
+                this.$nextBtn.click(function(){
+                    _this.playNext()
+                })
+                
+                this.$bullets.find('li').on('click',function(){
+                    var index = $(this).index()
+                    _this.play(index)
+                })
+            }
+
+            _AutoCarousel.prototype.playNext = function(){
+                    this.play((this.pageIndex+1)%this.imgCount)
+            }
+
+            _AutoCarousel.prototype.playPre = function(){
+                    this.play((this.imgCount+this.pageIndex-1)%this.imgCount)
+            }       
+            
+            _AutoCarousel.prototype.play = function(index){
+                var _this = this
+                if(this.isAnimate) return;
+                this.isAnimate =true
+                this.$imgs.eq(this.pageIndex).fadeOut(500)
+                this.$imgs.eq(index).fadeIn(500,function(){
+                _this.isAnimate = false;
+                })
+                this.pageIndex = index
+                this.setBullet()
+            }
+
+
+            _AutoCarousel.prototype.setBullet = function(){
+                this.$bullets.children().removeClass('active')
+                        .eq(this.pageIndex)
+                        .addClass('active')
+            }
+
+
+            _AutoCarousel.prototype.autoPlay = function(){
+                var _this = this
+                clock = setInterval(function(){
+                    _this.playNext()
+                },2000)
+            }
+
+            return {
+                init: function($ct){
+                    $ct.each(function(index,node){
+                        new _AutoCarousel($(node))
+                    })
+                }
+            }
+
+
+        })()
+
+        
+ 
+
+        AutoCarousel.init($('.carousel'))
+        
+
+ 
+
+    
+
+
+ 
+
+ 
+
+    </script>
+</body>
+</html>

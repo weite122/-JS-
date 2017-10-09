@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>面向对象之曝光加载</title>
+    <style>
+        ul,
+        li {
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .clearfix:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+
+        .container li {
+            float: left;
+            width: 280px;
+            margin: 30px;
+            border: 1px solid #999;
+        }
+
+        .container img {
+            display: block;
+            width: 100%;
+        }
+
+        p {
+            float: left
+        }
+    </style>
+</head>
+
+<body>
+    <ul class="container clearfix">
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/1.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/1.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/2.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/3.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/4.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/5.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/6.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/7.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/8.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/9.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/10.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/11.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/12.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/13.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/14.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/15.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/16.jpg" /></a></li>
+        <li><a href="#"><img src="http://kejian.jirengu.com/data/fe/%E8%AF%BE%E4%BB%B6/32-%E6%87%92%E5%8A%A0%E8%BD%BD/code/blank.jpg" data-src="http://cdn.jirengu.com/book.jirengu.com/img/17.jpg" /></a></li>
+        <p id="hello">Jon</p>
+        <p id="world"> The worth</p>
+    </ul>
+
+    <script src="https://cdn.bootcss.com/jquery/1.9.0/jquery.js"></script>
+    <script>
+        function Exposure($target, callback) {
+            this.$target = $target
+            this.callback = callback
+            this.bind()
+            this.lazyload()
+        }
+
+
+        Exposure.prototype.bind = function () {
+            var _this = this
+            $(window).on('scroll', function () {
+                _this.lazyload()
+            })
+        }
+        //通过添加属性去执行一次加载
+        Exposure.prototype.lazyload = function () {
+            if (this.isVisible(this.$target) && !this.$target.data('load')) {
+                this.$target.data('load', true)
+                this.callback(this.$target)
+            }
+        }
+
+
+        Exposure.prototype.isVisible = function () {
+            var scrollTop = $(window).scrollTop()
+            var windowHeight = $(window).height()
+            var offsetTop = this.$target.offset().top
+
+            if (scrollTop + windowHeight > offsetTop && scrollTop < offsetTop) {
+                return true
+            }
+            return false
+        }
+
+
+
+        function LoadImg($img) {
+            $img.attr('src', $img.attr('data-src'))
+        }
+
+        var Lazy = (function () {
+            return {
+                init: function ($targets, callback) {
+                    $targets.each(function (index, target) {
+                        new Exposure($(target), callback)
+                    })
+                },
+                /*这里第一次调用one，￥target.data('load')肯定是undefined，
+                然后开始new Exposure，新建的对象就是触发曝光懒加载，所以在这里这样加锁操作是没用的，在Exposure
+                里加个方法，把加载一次判断放到Exposure里*/
+                // one: function ($targets, callback) {
+                //     if (!$targets.data('load')) {
+                //         $targets.each(function (index, target) {
+                //             $targets.data('load', true)
+                //             new Exposure($(target), callback)
+                //         })
+
+                //     }
+
+                // }
+
+            }
+        })()
+
+        Lazy.init($('#hello'), function ($node) {
+            $node.text($node.text() + ' Snow：')
+            console.log('$node', $node)
+        })
+
+        Lazy.init($('#world'), function ($node) {
+            $node.text($node.text() + ' will never forgetten！')
+            console.log('$node2', $node)
+        })
+
+        Lazy.init($('.container img'), function ($node) {
+            LoadImg($node)
+        })
+
+
+        // new Exposure($('#hello'), function($node){
+        //     setTimeout(function(){
+        //         $node.text( $node.text() + $node.text());
+        //     },2000)
+
+        // })
+
+
+        // $('.container img').each(function(index,img){
+        //     new Exposure($(img),function($img){
+        //         LoadImg($img)
+        //     })
+        // })
+    </script>
+</body>
+
+</html>

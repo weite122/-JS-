@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>面向对象之滚动轮播</title>
+    <style>
+        ul,li{
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .carousel{
+            position: relative;
+            width: 300px;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .carousel .img-container{
+            position: absolute;
+            overflow: hidden;
+        }
+        .img-container li{
+            float: left;
+        }
+        .img-container img{
+            
+            display: block;
+            width: 300px;
+            height: 200px;
+            z-index: 0
+        }
+
+        .carousel .btn{
+            position: absolute;
+            top: 50%;
+            margin-top: -15px;
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 20px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 1    
+        }/*z-index设置position才有效*/
+        .btn:hover{
+            opacity: 0.6;
+        }
+        .btn-pre{
+            left: 5px;
+        }
+        .btn-next{
+            right: 5px;
+        }
+        .bullet{
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            
+        }
+        .bullet>li{
+            display: inline-block;
+            font-size: 0;
+            width: 25px;
+            height: 5px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .bullet .active{
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel">
+        <ul class="img-container">
+            <li data-index="0"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/1.jpg" alt="1.jpg"></a></li>
+			<li data-index="1"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/2.jpg" alt="2.jpg"></a></li>
+			<li data-index="2"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/3.jpg" alt="3.jpg"></a></li>
+			<li data-index="3"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/4.jpg" alt="4.jpg"></a></li>        
+        </ul>
+        <a href="#" class="btn btn-pre">&lt;</a>
+        <a href="#" class="btn btn-next">&gt;</a>
+        <div class="bullet-container">
+            <ul class="bullet">
+                <li class = "active"></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+    <div class="carousel">
+        <ul class="img-container">
+            <li data-index="0"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/1.jpg" alt="1.jpg"></a></li>
+			<li data-index="1"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/2.jpg" alt="2.jpg"></a></li>
+			<li data-index="2"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/3.jpg" alt="3.jpg"></a></li>
+			<li data-index="3"><a href=""><img src="http://cdn.jirengu.com/book.jirengu.com/img/4.jpg" alt="4.jpg"></a></li>        
+        </ul>
+        <a href="#" class="btn btn-pre">&lt;</a>
+        <a href="#" class="btn btn-next">&gt;</a>
+        <div class="bullet-container">
+            <ul class="bullet">
+                <li class = "active"></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+
+
+        var Carousel = (function(){
+            function _Carousel($ct){
+                this.$ct = $ct
+                this.init()
+                this.bind()
+            }
+
+            _Carousel.prototype.init = function(){
+                
+                var $imgContainer = this.$imgContainer = this.$ct.find('.img-container')
+                /*下面这行代码有问题，find()中加了.carousel就无法运行，不知道原因*/
+                //var $imgContainer = this.$imgContainer = this.$ct.find('.carousel .img-container')
+                /*this.$ct是.img-container的上一级元素，$a.find('.b), .b必须是$a 的子元素，只能从孩子里找，
+                $('.a .b')'可以写成$('.a').find('.b'),不能写成$('.a').find('.a .b'),因为你不能写成$('.a .a .b')*/
+                //console.log($imgContainer)
+                var $imgs = this.$imgs = this.$ct.find('.img-container >li')
+                var imgCount = this.imgCount = this.$imgs.length
+
+
+                var imgWidth = this.imgWidth = this.$imgs.width()
+                var $preBtn = this.$preBtn = this.$ct.find('.btn-pre')
+                var $nextBtn = this.$nextBtn = this.$ct.find('.btn-next ')
+                var $bullets = this.$bullets = this.$ct.find('.bullet li')
+                    
+                this.pageIndex = 0
+                this.isAnimate =false
+                
+                $imgContainer.append($imgs.first().clone())
+                $imgContainer.prepend($imgs.last().clone())
+                $imgContainer.width((imgCount+2) * imgWidth)
+                $imgContainer.css({left: -imgWidth})
+            }
+
+            _Carousel.prototype.bind = function(){
+                var _this = this
+                this.$preBtn.on('click',function(e){
+                    e.preventDefault()
+                    _this.playPre(1)
+                })
+
+                this.$nextBtn.on('click',function(e){
+                    e.preventDefault()
+                    _this.playNext(1)
+                })
+            
+                this.$bullets.on('click',function(){
+                    var index = $(this).index()
+                    if(index >_this.pageIndex){
+                    _this.playNext(index - _this.pageIndex)
+                    }else if(index < _this.pageIndex){
+                        _this.playPre(_this.pageIndex - index)
+                    }
+            
+                })
+            }
+
+
+            _Carousel.prototype.playNext = function(len){
+                var _this = this
+                if(this.isAnimate) return;
+                this.isAnimate = true
+                this.$imgContainer.animate({
+                    left: '-='+len*_this.imgWidth
+                },function(){
+                    _this.pageIndex+=len
+                    if(_this.pageIndex === _this.imgCount){
+                        _this.pageIndex = 0
+                        _this.$imgContainer.css({left: -_this.imgWidth})
+                    }
+                _this.setBullet()
+                _this.isAnimate = false
+                })
+            }
+
+
+            _Carousel.prototype.playPre = function(len){
+                var _this = this
+                if(this.isAnimate) return;
+                this.isAnimate = true
+                this.$imgContainer.animate({
+                    left: '+='+len*_this.imgWidth
+                },function(){
+                    _this.pageIndex-=len
+                    if(_this.pageIndex < 0){
+                        _this.pageIndex = _this.imgCount -1 
+                        _this.$imgContainer.css({left: -_this.imgCount*_this.imgWidth})
+                    }
+                _this.setBullet()
+                _this.isAnimate = false
+                })
+            }
+
+            _Carousel.prototype.setBullet = function(){
+                this.$bullets.removeClass('active')
+                    .eq(this.pageIndex)
+                    .addClass('active')
+
+            }
+            return {
+                init: function($ct){
+                    $ct.each(function(index,node){
+
+                        new _Carousel($(node))
+                    })
+                }
+            }
+        })()
+
+        Carousel.init($('.carousel'))
+
+        // new Carousel($('.carousel').eq(0));
+        // new Carousel($('.carousel').eq(1));
+
+    </script>
+</body>
+</html>

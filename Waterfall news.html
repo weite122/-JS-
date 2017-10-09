@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>面向对象之新闻瀑布流网站</title>
+    <style>
+        html,
+        body,
+        ul,
+        li,
+        p,
+        div {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        ul,
+        li {
+            list-style: none;
+        }
+
+        .wrapper {
+            width: 900px;
+            margin: 0 auto;
+        }
+
+        #picture-content {
+            position: relative;
+        }
+
+        #picture-content .item {
+            position: absolute;
+            padding: 0 0 10px 0;
+            width: 280px;
+            margin: 10px;
+            border: 1px solid #DFDFDF;
+            opacity: 0;
+            transition: all .8s;
+        }
+
+        #picture-content .item img {
+            margin: 10px;
+            width: 260px;
+        }
+
+        #picture-content .item .header {
+            height: 25px;
+            margin: 0 12px;
+            border-bottom: 1px solid #DBDBDB;
+        }
+
+        #picture-content .description {
+            font-size: 12px;
+            margin: 10px 15px 0;
+            color: #777371;
+        }
+
+        #load {
+            visibility: hidden;
+            height: 20px;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <ul id="picture-content">
+            <!--<li class="item">
+    			<a href="#" class="link">
+    				<img src="http://s.img.mix.sina.com.cn/auto/resize?img=http%3A%2F%2Fwww.sinaimg.cn%2Fdy%2Fslidenews%2F5_img%2F2016_09%2F453_75615_657883.jpg&size=250_0" alt="">
+    			</a>
+    			<h4 class="header">标题</h4>
+    			<p class="description">
+    				当地时间2016年3月1日，在东部与亲俄武装作战中受伤的乌克兰士兵接受海豚治疗。
+    			</p>
+    		</li>-->
+
+            <!-- 用于计算 item 宽度和列数，但不展示出来-->
+            <li class="item hide"></li>
+        </ul>
+        <div id="load">我是看不见的</div>
+    </div>
+
+    <script src="https://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+
+
+var WaterfullNews = (function(){
+ 
+    function _WaterfullNews($ct){
+        this.$ct = $ct
+        this.init()
+    }
+
+
+    _WaterfullNews.prototype.init = function(){
+        this.currentPage = 1
+        this.perPageCount = 10
+        this.colSumHeight = []
+        this.$item = this.$ct.find('.item')
+        this.$load = this.$ct.find('#load')
+        this.nodeWidth = this.$item.outerWidth(true)
+        this.colNum = parseInt(this.$ct.width()/ this.nodeWidth)
+
+        this.isDataArrive = true
+        for (var i = 0; i < this.colNum; i++) {
+            this.colSumHeight[i] = 0
+        }
+
+        this.start() //先加载一次，等到滚动页面时再继续加载
+        
+        var _this = this
+        $(window).scroll(function () {    
+            if (!_this.isDataArrive) return
+            if (_this.isVisible($(_this.$load))) {
+                _this.start()
+            }
+            
+        })
+ 
+    }
+
+    _WaterfullNews.prototype.start = function(){
+        var _this = this
+        this.getData(function (newsList) {
+            _this.isDataArrive = true
+             
+            $.each(newsList, function (index, news) {
+                var $node = _this.getNode(news)
+                $node.find('img').load(function () {
+                    $('#picture-content').append($node)
+                    _this.waterFallPlace($node)
+                })
+            })  
+        })
+        _this.isDataArrive = false
+ 
+    }
+
+    _WaterfullNews.prototype.getData = function(callback){
+        var _this =this
+        $.ajax({
+            url: 'http://platform.sina.com.cn/slide/album_tech',
+            dataType: 'jsonp',
+            jsonp: "jsoncallback",
+            data: {
+                app_key: '1271687855',
+                num: _this.perPageCount,
+                page: _this.currentPage
+            }
+        }).done(function (ret) {
+            if (ret && ret.status && ret.status.code === "0") {
+                callback(ret.data) 
+                _this.currentPage++
+            } else {
+                console.log('get error data');
+            }
+        })
+         
+    }
+
+
+    _WaterfullNews.prototype.getNode = function(item) {
+        var html = ''
+        html += '<li class="item">';
+        html += ' <a href="' + item.url + '" class="link"><img src="' + item.img_url + '" alt=""></a>';
+        html += ' <h4 class="header">' + item.short_name + '</h4>';
+        html += '<p class="description">' + item.short_intro + '</p>';
+        html += '</li>';
+
+        return $(html)
+ 
+    }
+
+
+    _WaterfullNews.prototype.waterFallPlace = function($node){
+        var _this = this
+        var index = 0;
+        var minSumHeight = this.colSumHeight[0]
+
+        minSumHeight = Math.min.apply(null,_this.colSumHeight)
+        index = this.colSumHeight.indexOf(minSumHeight)
+
+        $node.css({
+            left: this.nodeWidth * index,
+            top: minSumHeight,
+            opacity: 1
+        })
+
+            this.colSumHeight[index] += $node.outerHeight(true) 
+            this.$ct.height(Math.max.apply(null, this.colSumHeight))
+        }
+
+    _WaterfullNews.prototype.isVisible = function($el){
+        var scrollHeight = $(window).scrollTop()
+        var windowHeight = $(window).height()
+        var top = $el.offset().top
+
+        if (top < windowHeight + scrollHeight) {
+            return true
+        } else {
+            return false
+        }
+    }
+ 
+    return {
+        init: function($ct){
+            $ct.each(function(index,node){
+                new _WaterfullNews($(node))
+            })
+        }
+    }
+})()
+
+    WaterfullNews.init($('.wrapper'))
+
+    </script>
+</body>
+
+
+</html>
+
+
