@@ -1,6 +1,6 @@
 # JS-Component 预览链接:
 
-- [Exposure-load](https://weite122.github.io/JS-Component/ExposureLoad.html)
+- [ExposureLoad](https://weite122.github.io/JS-Component/ExposureLoad.html)
 - [Calendar](https://weite122.github.io/JS-Component/Calendar.html)
 - [Carousel](https://weite122.github.io/JS-Component/Carousel.html)
 - [Dialog](https://weite122.github.io/JS-Component/Dialog.html)
