@@ -7,3 +7,4 @@
 - [Gradient-carousel](https://weite122.github.io/JS-Component/Gradient-carousel.html)
 - [Tab](https://weite122.github.io/JS-Component/Tab.html)
 - [Waterfall-news](https://weite122.github.io/JS-Component/Waterfall-news.html)
+- [Barrel](https://weite122.github.io/JS-Component/Barrel.html)
